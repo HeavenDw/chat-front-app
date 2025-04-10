@@ -20,7 +20,7 @@ export const $formDisabled = $passwordLoginPending;
 const formValid = every({ stores: [$emailError, $passwordError], predicate: null });
 
 reset({
-  clock: currentRoute.open,
+  clock: currentRoute.opened,
   target: [$email, $emailError, $password, $passwordError, $error],
 });
 
