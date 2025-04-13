@@ -3,10 +3,12 @@ import { and, every, not, reset } from 'patronum';
 
 import * as api from '~/shared/api';
 import { routes } from '~/shared/routing';
+import { chainAnonymous } from '~/shared/session';
 
 const signInFx = attach({ effect: api.signInFx });
 
 export const currentRoute = routes.auth.login;
+export const anonymousRoute = chainAnonymous(currentRoute, { otherwise: routes.main.open });
 
 export const $email = createStore('');
 export const $emailError = createStore<null | 'empty' | 'invalid'>(null);
