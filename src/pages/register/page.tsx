@@ -26,7 +26,7 @@ export const RegisterPage = () => {
   };
   return (
     <>
-      <Container size={420} my={40} w="100%" h="100vh">
+      <Container size={420} my={40} w="100%" h="100%">
         <Title
           style={(theme) => ({
             fontFamily: `Greycliff CF, ${theme.fontFamily}`,
@@ -81,7 +81,6 @@ const Email = () => {
       onChange={(event) => emailField.changed(event.target.value)}
       label="email"
       placeholder="email"
-      mt="md"
       leftSection={<IconAt size="0.8rem" />}
       disabled={formDisabled}
       error={emailError}

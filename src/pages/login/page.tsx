@@ -41,7 +41,7 @@ export const LoginPage = () => {
 
   return (
     <>
-      <Container size={420} my={40} w="100%" h="100vh">
+      <Container size={420} my={40} w="100%" h="100%">
         <Modal opened={false} onClose={close} title="Verify yout identity" centered>
           <Flex justify="center" direction="column" align="center" gap="sm" mt="sm">
             <IconFaceId size="5rem" />

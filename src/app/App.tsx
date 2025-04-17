@@ -3,8 +3,9 @@ import { RouterProvider } from 'atomic-router-react';
 
 import { Pages } from '~/pages';
 
+import { Header } from '~/widgets/header';
+
 import { router } from '~/shared/routing';
-import { SchemeSwitcher } from '~/shared/ui/SchemeSwitcher';
 
 const theme = createTheme({});
 
@@ -12,7 +13,7 @@ export const App = () => {
   return (
     <RouterProvider router={router}>
       <MantineProvider theme={theme} defaultColorScheme="dark" withGlobalClasses>
-        <SchemeSwitcher />
+        <Header />
         <Pages />
       </MantineProvider>
     </RouterProvider>
