@@ -1,5 +1,5 @@
 import { chainRoute, RouteInstance, RouteParams, RouteParamsAndQuery } from 'atomic-router';
-import { attach, createEvent, createStore, Effect, sample } from 'effector';
+import { createEvent, createStore, Effect, sample } from 'effector';
 
 import * as api from '~/shared/api';
 
@@ -11,7 +11,6 @@ enum AuthStatus {
   Anonymous,
   Authenticated,
 }
-const logoutFX = attach({ effect: api.logoutFX });
 
 export const $user = createStore<User | null>(null);
 const $authStatus = createStore<AuthStatus>(AuthStatus.initial);
@@ -26,7 +25,7 @@ $authStatus.on(api.sessionGetFx.doneData, () => AuthStatus.Authenticated);
 
 $authStatus.on(api.sessionGetFx.fail, () => AuthStatus.Anonymous);
 
-$user.on(logoutFX.doneData, () => null);
+$user.on(api.logoutFx.doneData, () => null);
 
 interface ChainParams<Params extends RouteParams> {
   otherwise?: Effect<void, any, any>;

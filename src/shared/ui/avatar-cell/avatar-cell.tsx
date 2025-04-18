@@ -1,0 +1,18 @@
+import { Avatar, Box, Text } from '@mantine/core';
+
+import { User } from '~/shared/types';
+
+import styles from './styles.module.css';
+
+interface Props {
+  user: User;
+}
+
+export const AvatarCell = ({ user }: Props) => {
+  return (
+    <Box className={styles.container}>
+      <Avatar name={user.email} />
+      <Text>{user.email}</Text>
+    </Box>
+  );
+};

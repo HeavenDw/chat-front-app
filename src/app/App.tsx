@@ -3,7 +3,7 @@ import { RouterProvider } from 'atomic-router-react';
 
 import { Pages } from '~/pages';
 
-import { Header } from '~/widgets/header';
+import { Header } from '~/widgets/header/ui';
 
 import { router } from '~/shared/routing';
 

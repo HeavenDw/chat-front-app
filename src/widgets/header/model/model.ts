@@ -3,17 +3,17 @@ import { attach, createEvent, sample } from 'effector';
 import * as api from '~/shared/api';
 import { routes } from '~/shared/routing';
 
-const logoutFX = attach({ effect: api.logoutFX });
+const logoutFx = attach({ effect: api.logoutFx });
 
 export const logoutClicked = createEvent();
 
 sample({
   clock: logoutClicked,
-  target: logoutFX,
+  target: logoutFx,
 });
 
 sample({
-  clock: logoutFX.doneData,
+  clock: logoutFx.doneData,
   target: api.sessionGetFx,
 });
 

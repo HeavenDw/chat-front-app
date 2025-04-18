@@ -18,7 +18,7 @@ export const signInFx = createEffect<SignIn, User, SignInError>(async (form) => 
   return response.user;
 });
 
-export const logoutFX = createEffect<void, void>(async () => {
+export const logoutFx = createEffect<void, void>(async () => {
   await requestFx({ url: 'logout', method: 'post' });
 
   localStorage.removeItem(LocalStorageKeys.accessToken);
