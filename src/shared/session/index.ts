@@ -11,21 +11,20 @@ enum AuthStatus {
   Anonymous,
   Authenticated,
 }
-const sessionGetFx = attach({ effect: api.sessionGetFx });
 const logoutFX = attach({ effect: api.logoutFX });
 
 export const $user = createStore<User | null>(null);
 const $authStatus = createStore<AuthStatus>(AuthStatus.initial);
 
-$authStatus.on(sessionGetFx, (status) => {
+$authStatus.on(api.sessionGetFx, (status) => {
   if (status === AuthStatus.initial) return AuthStatus.Pending;
   return status;
 });
 
-$user.on(sessionGetFx.doneData, (_, response) => response.user);
-$authStatus.on(sessionGetFx.doneData, () => AuthStatus.Authenticated);
+$user.on(api.sessionGetFx.doneData, (_, response) => response.user);
+$authStatus.on(api.sessionGetFx.doneData, () => AuthStatus.Authenticated);
 
-$authStatus.on(sessionGetFx.fail, () => AuthStatus.Anonymous);
+$authStatus.on(api.sessionGetFx.fail, () => AuthStatus.Anonymous);
 
 $user.on(logoutFX.doneData, () => null);
 
@@ -56,11 +55,11 @@ export const chainAuthorized = <Params extends RouteParams>(
     clock: sessionCheckStarted,
     source: $authStatus,
     filter: (status) => status === AuthStatus.initial,
-    target: sessionGetFx,
+    target: api.sessionGetFx,
   });
 
   sample({
-    clock: [sessionGetFx.fail, alreadyAnonymous],
+    clock: [api.sessionGetFx.fail, alreadyAnonymous],
     source: { params: route.$params, query: route.$query },
     filter: route.$isOpened,
     target: sessionReceivedAnonymous,
@@ -76,7 +75,7 @@ export const chainAuthorized = <Params extends RouteParams>(
   return chainRoute({
     route,
     beforeOpen: sessionCheckStarted,
-    openOn: [alreadyAuthenticated, sessionGetFx.done],
+    openOn: [alreadyAuthenticated, api.sessionGetFx.done],
     cancelOn: sessionReceivedAnonymous,
   });
 };
@@ -104,11 +103,11 @@ export const chainAnonymous = <Params extends RouteParams>(
     clock: sessionCheckStarted,
     source: $authStatus,
     filter: (status) => status === AuthStatus.initial,
-    target: sessionGetFx,
+    target: api.sessionGetFx,
   });
 
   sample({
-    clock: [alreadyAuthenticated, sessionGetFx.done],
+    clock: [alreadyAuthenticated, api.sessionGetFx.done],
     source: { params: route.$params, query: route.$query },
     filter: route.$isOpened,
     target: sessionReceivedAuth,
@@ -124,7 +123,7 @@ export const chainAnonymous = <Params extends RouteParams>(
   return chainRoute({
     route,
     beforeOpen: sessionCheckStarted,
-    openOn: [alreadyAnonymous, sessionGetFx.fail],
+    openOn: [alreadyAnonymous, api.sessionGetFx.fail],
     cancelOn: sessionReceivedAuth,
   });
 };

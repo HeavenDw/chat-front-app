@@ -12,6 +12,11 @@ sample({
   target: logoutFX,
 });
 
+sample({
+  clock: logoutFX.doneData,
+  target: api.sessionGetFx,
+});
+
 export const loginClicked = createEvent();
 
 sample({
