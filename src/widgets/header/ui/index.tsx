@@ -2,8 +2,7 @@ import { Button } from '@mantine/core';
 import { useUnit } from 'effector-react';
 
 import { $user } from '~/shared/session';
-import { AvatarCell } from '~/shared/ui/avatar-cell/avatar-cell';
-import { SchemeSwitcher } from '~/shared/ui/scheme-switcher';
+import { SchemeSwitcher, UserCell } from '~/shared/ui';
 
 import {
   $loginButtonShown,
@@ -23,7 +22,7 @@ export const Header = () => {
 
   return (
     <div className={styles.header}>
-      {user ? <AvatarCell user={user} /> : <div />}
+      {user ? <UserCell user={user} /> : <div />}
 
       <div className={styles.rightSideContainer}>
         {!user && (

@@ -8,7 +8,7 @@ interface Props {
   user: User;
 }
 
-export const AvatarCell = ({ user }: Props) => {
+export const UserCell = ({ user }: Props) => {
   return (
     <Box className={styles.container}>
       <Avatar name={user.email} />
