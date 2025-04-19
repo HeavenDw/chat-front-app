@@ -23,9 +23,10 @@ const connectWebSocketFx = createEffect<{ url: string; user: User }, WebSocket>(
     socket.send(
       JSON.stringify({
         event: 'connect',
-        userEmail: user?.email,
+        user: user,
         id: Date.now(),
-      }),
+        createdAt: new Date(),
+      } as Message),
     );
   };
 
@@ -71,9 +72,10 @@ const disconnectWebSocketFx = createEffect(
       socket.send(
         JSON.stringify({
           event: 'disconnect',
-          userEmail: user.email,
+          user: user,
           id: Date.now(),
-        }),
+          createdAt: new Date(),
+        } as Message),
       );
     }
     socket.close();
@@ -105,7 +107,7 @@ sample({
 export const $messages = createStore<Message[]>([]);
 const messageReceived = createEvent<Message>();
 
-$messages.on(messageReceived, (prev, message) => [message, ...prev]);
+$messages.on(messageReceived, (prev, message) => [...prev, message]);
 
 export const messageSended = createEvent();
 const sendWebSocketMessageFx = createEffect<{ socket: WebSocket; message: Message }, void>(
@@ -121,10 +123,11 @@ sample({
   fn: ({ socket, comment, user }) => ({
     socket: socket!,
     message: {
-      userEmail: user!.email,
+      user: user!,
       id: Date.now(),
       event: 'message',
       body: comment,
+      createdAt: new Date(),
     } as Message,
   }),
   target: sendWebSocketMessageFx,

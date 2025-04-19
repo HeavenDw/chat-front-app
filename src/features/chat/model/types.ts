@@ -1,6 +1,9 @@
+import { User } from '~/shared/types';
+
 export type Message = {
   id: number;
-  userEmail: string;
+  user: User;
   event: 'connect' | 'disconnect' | 'message';
+  createdAt: Date | string;
   body?: string;
 };

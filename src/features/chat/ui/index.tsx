@@ -1,6 +1,7 @@
 import { Button, Flex, Text, TextInput } from '@mantine/core';
 import { useUnit } from 'effector-react';
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
+import { Comment } from '~/entity/message/ui';
 
 import { $user } from '~/shared/session';
 
@@ -25,6 +26,14 @@ export const Chat = () => {
     $user,
   ]);
 
+  const commentListRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (commentListRef.current) {
+      commentListRef.current.scrollTop = commentListRef.current.scrollHeight;
+    }
+  }, [messages]);
+
   useEffect(() => {
     return () => {
       chatClosed();
@@ -33,33 +42,32 @@ export const Chat = () => {
 
   return (
     <div className={styles.chatContainer}>
-      <Text>Chat</Text>
+      <Text>Chat with users</Text>
 
-      {messages.map((message) => {
-        if (message.event !== 'message' && message.userEmail === user?.email) return null;
-        if (message.event === 'connect') {
-          return <Text key={message.id}>{message.userEmail} joined the chat</Text>;
-        }
-        if (message.event === 'disconnect') {
-          return <Text key={message.id}>{message.userEmail} left the chat</Text>;
-        }
-        return (
-          <Text key={message.id}>
-            {message.userEmail}: {message.body}
-          </Text>
-        );
-      })}
+      <Flex direction="column" gap="8px" mih="0">
+        <div className={styles.commentList} ref={commentListRef}>
+          {messages.map((message) => (
+            <Comment key={message.id} message={message} self={message.user?.id === user?.id} />
+          ))}
+        </div>
 
-      <Flex align="center" gap="xs">
-        <TextInput
-          value={comment}
-          onChange={(event) => commentChanged(event.target.value)}
-          placeholder="Type here..."
-          flex={1}
-        />
-        <Button onClick={() => messageSended()} disabled={commentSubmitDisabled}>
-          Send message
-        </Button>
+        <Flex align="center" gap="8px">
+          <TextInput
+            value={comment}
+            onChange={(event) => commentChanged(event.target.value)}
+            placeholder="Type here..."
+            flex={1}
+            onKeyDown={(event) => {
+              if (event.key === 'Enter' && !commentSubmitDisabled) {
+                event.preventDefault();
+                messageSended();
+              }
+            }}
+          />
+          <Button onClick={() => messageSended()} disabled={commentSubmitDisabled}>
+            Send message
+          </Button>
+        </Flex>
       </Flex>
     </div>
   );
