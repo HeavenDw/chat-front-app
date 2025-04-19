@@ -1,0 +1,11 @@
+.chatContainer {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 8px;
+  width: 600px;
+  height: 600px;
+  border: 2px solid var(--mantine-color-default);
+  border-radius: 12px;
+}

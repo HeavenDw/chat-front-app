@@ -5,6 +5,11 @@
   gap: 8px;
   padding: 8px 12px;
   width: 100%;
+  position: sticky;
+  top: 0;
+  left: 0;
+  background-color: var(--mantine-color-body);
+  border-bottom: 1px solid var(--mantine-color-default);
 }
 
 .rightSideContainer {
