@@ -1,6 +1,8 @@
 import { Button } from '@mantine/core';
+import { Link } from 'atomic-router-react';
 import { useUnit } from 'effector-react';
 
+import { routes } from '~/shared/routing';
 import { $user } from '~/shared/session';
 import { SchemeSwitcher, UserCell } from '~/shared/ui';
 
@@ -22,7 +24,13 @@ export const Header = () => {
 
   return (
     <div className={styles.header}>
-      {user ? <UserCell user={user} /> : <div />}
+      {user ? (
+        <Link to={routes.user} params={{ userId: user.id }}>
+          <UserCell user={user} />
+        </Link>
+      ) : (
+        <div />
+      )}
 
       <div className={styles.rightSideContainer}>
         {!user && (

@@ -11,7 +11,7 @@ interface SignIn {
 export type SignInError = { error: 'invalid_request' } | { error: 'invalid_credentials' };
 
 export const signInFx = createEffect<SignIn, User, SignInError>(async (form) => {
-  const response: SignResponse = await requestFx({ url: 'login', method: 'post', data: form });
+  const response: SignResponse = await requestFx({ url: 'login', method: 'POST', data: form });
 
   localStorage.setItem(LocalStorageKeys.accessToken, response.accessToken);
 
@@ -19,7 +19,7 @@ export const signInFx = createEffect<SignIn, User, SignInError>(async (form) => 
 });
 
 export const logoutFx = createEffect<void, void>(async () => {
-  await requestFx({ url: 'logout', method: 'post' });
+  await requestFx({ url: 'logout', method: 'POST' });
 
   localStorage.removeItem(LocalStorageKeys.accessToken);
 
@@ -52,7 +52,7 @@ type SessionGetError = { error: 'unauthorized' };
 export const sessionGetFx = createEffect<void, SignResponse, SessionGetError>(async () => {
   try {
     const response = await fetch('http://localhost:5000/api/refresh', {
-      method: 'get',
+      method: 'GET',
       headers: {
         'Content-Type': 'application/json',
       },

@@ -1,0 +1,74 @@
+import { Button, Container, Flex, PasswordInput, Stack, Text, TextInput } from '@mantine/core';
+import { IconAt, IconLock } from '@tabler/icons-react';
+import { Link } from 'atomic-router-react';
+import { useUnit } from 'effector-react';
+
+import { routes } from '~/shared/routing';
+
+import {
+  $email,
+  $emailError,
+  $error,
+  $password,
+  $passwordError,
+  $submitDisabled,
+  emailChanged,
+  formSubmitted,
+  passwordChanged,
+} from '../model/model';
+import styles from './styles.module.css';
+
+export const UserPage = () => {
+  const [email, password, submitDisabled, emailError, passwordError] = useUnit([
+    $email,
+    $password,
+    $submitDisabled,
+    $emailError,
+    $passwordError,
+  ]);
+  return (
+    <Container size={420} my={40} w="100%" h="100%">
+      <Stack gap="xl">
+        <TextInput
+          value={email}
+          onChange={(event) => emailChanged(event.target.value)}
+          label="email"
+          placeholder="email"
+          required
+          leftSection={<IconAt size="0.8rem" />}
+          error={emailError}
+        />
+        <PasswordInput
+          value={password}
+          onChange={(event) => passwordChanged(event.target.value)}
+          label="password"
+          placeholder="your password"
+          required
+          leftSection={<IconLock size="0.8rem" />}
+          error={passwordError}
+        />
+        <ErrorView />
+
+        <Flex gap="xl" justify="space-between">
+          <Link to={routes.main} className={styles.link}>
+            <Button fullWidth>Back to chat</Button>
+          </Link>
+
+          <Button flex="1 1 50%" disabled={submitDisabled} onClick={() => formSubmitted()}>
+            Save
+          </Button>
+        </Flex>
+      </Stack>
+    </Container>
+  );
+};
+
+const ErrorView = () => {
+  const error = useUnit($error);
+
+  if (!error) {
+    return null;
+  }
+
+  return <Text c="red">Something went wrong</Text>;
+};

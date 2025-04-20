@@ -15,6 +15,7 @@ export const routes = {
     login: createRoute(),
     register: createRoute(),
   },
+  user: createRoute<{ userId?: string }>(),
 };
 
 const routesMap: UnmappedRouteObject<any>[] = [
@@ -29,6 +30,10 @@ const routesMap: UnmappedRouteObject<any>[] = [
   {
     path: '/register',
     route: routes.auth.register,
+  },
+  {
+    path: '/user/:userId',
+    route: routes.user,
   },
 ];
 
