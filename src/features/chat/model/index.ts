@@ -7,6 +7,7 @@ import { appClosing } from '~/shared/config/init';
 import { $user } from '~/shared/session';
 import { User } from '~/shared/types';
 
+import { getMessagesFx, wssUrl } from '../api';
 import { Message } from './types';
 
 export const chatInit = createEvent();
@@ -50,7 +51,7 @@ sample({
   clock: [chatInit, $user],
   source: { user: $user, socket: $socket },
   filter: ({ user, socket }) => Boolean(user) && socket === null,
-  fn: ({ user }) => ({ url: 'ws://localhost:4000', user: user! }),
+  fn: ({ user }) => ({ url: wssUrl, user: user! }),
   target: connectWebSocketFx,
 });
 
@@ -105,8 +106,18 @@ sample({
 });
 
 export const $messages = createStore<Message[]>([]);
-const messageReceived = createEvent<Message>();
 
+sample({
+  clock: chatInit,
+  target: getMessagesFx,
+});
+
+sample({
+  clock: getMessagesFx.doneData,
+  target: $messages,
+});
+
+const messageReceived = createEvent<Message>();
 $messages.on(messageReceived, (prev, message) => [...prev, message]);
 
 export const messageSended = createEvent();
