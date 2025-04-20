@@ -9,14 +9,11 @@ import {
   $comment,
   $commentSubmitDisabled,
   $messages,
-  chatClosed,
-  chatInit,
   commentChanged,
   messageSended,
 } from '../model';
 import styles from './styles.module.css';
-
-chatInit();
+import { UsersOnline } from './users-online';
 
 export const Chat = () => {
   const [messages, comment, commentSubmitDisabled, user] = useUnit([
@@ -34,41 +31,38 @@ export const Chat = () => {
     }
   }, [messages]);
 
-  useEffect(() => {
-    return () => {
-      chatClosed();
-    };
-  }, []);
-
   return (
-    <div className={styles.chatContainer}>
-      <Text>Chat with users</Text>
+    <Flex gap="8px">
+      <div className={styles.chatContainer}>
+        <Text>Chat with users</Text>
 
-      <Flex direction="column" gap="8px" mih="0">
-        <div className={styles.commentList} ref={commentListRef}>
-          {messages.map((message) => (
-            <Comment key={message.id} message={message} self={message.user?.id === user?.id} />
-          ))}
-        </div>
+        <Flex direction="column" gap="8px" mih="0">
+          <div className={styles.commentList} ref={commentListRef}>
+            {messages.map((message) => (
+              <Comment key={message.id} message={message} self={message.user?.id === user?.id} />
+            ))}
+          </div>
 
-        <Flex align="center" gap="8px">
-          <TextInput
-            value={comment}
-            onChange={(event) => commentChanged(event.target.value)}
-            placeholder="Type here..."
-            flex={1}
-            onKeyDown={(event) => {
-              if (event.key === 'Enter' && !commentSubmitDisabled) {
-                event.preventDefault();
-                messageSended();
-              }
-            }}
-          />
-          <Button onClick={() => messageSended()} disabled={commentSubmitDisabled}>
-            Send message
-          </Button>
+          <Flex align="center" gap="8px">
+            <TextInput
+              value={comment}
+              onChange={(event) => commentChanged(event.target.value)}
+              placeholder="Type here..."
+              flex={1}
+              onKeyDown={(event) => {
+                if (event.key === 'Enter' && !commentSubmitDisabled) {
+                  event.preventDefault();
+                  messageSended();
+                }
+              }}
+            />
+            <Button onClick={() => messageSended()} disabled={commentSubmitDisabled}>
+              Send message
+            </Button>
+          </Flex>
         </Flex>
-      </Flex>
-    </div>
+      </div>
+      <UsersOnline />
+    </Flex>
   );
 };

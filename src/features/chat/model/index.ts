@@ -7,10 +7,10 @@ import { appClosing } from '~/shared/config/init';
 import { $user } from '~/shared/session';
 import { User } from '~/shared/types';
 
-import { getMessagesFx, wssUrl } from '../api';
+import { getMessagesFx, getUsersOnlineFx, wssUrl } from '../api';
 import { Message } from './types';
 
-export const chatInit = createEvent();
+export const chatOpened = createEvent();
 export const chatClosed = createEvent();
 
 const $socket = createStore<WebSocket | null>(null);
@@ -48,7 +48,7 @@ const connectWebSocketFx = createEffect<{ url: string; user: User }, WebSocket>(
 });
 
 sample({
-  clock: [chatInit, $user],
+  clock: [chatOpened, $user],
   source: { user: $user, socket: $socket },
   filter: ({ user, socket }) => Boolean(user) && socket === null,
   fn: ({ user }) => ({ url: wssUrl, user: user! }),
@@ -108,7 +108,7 @@ sample({
 export const $messages = createStore<Message[]>([]);
 
 sample({
-  clock: chatInit,
+  clock: chatOpened,
   target: getMessagesFx,
 });
 
@@ -117,8 +117,55 @@ sample({
   target: $messages,
 });
 
+sample({
+  clock: chatClosed,
+  fn: () => [],
+  target: $messages,
+});
+
 const messageReceived = createEvent<Message>();
 $messages.on(messageReceived, (prev, message) => [...prev, message]);
+
+export const $usersOnline = createStore<User[]>([]);
+
+sample({
+  clock: chatOpened,
+  target: getUsersOnlineFx,
+});
+
+sample({
+  clock: getUsersOnlineFx.doneData,
+  source: $usersOnline,
+  fn: (users, response) => {
+    const uniqueUsers = [...users];
+    response.forEach((user) => {
+      if (!uniqueUsers.some(({ id }) => id === user.id)) uniqueUsers.push(user);
+    });
+    return uniqueUsers;
+  },
+  target: $usersOnline,
+});
+
+sample({
+  clock: messageReceived,
+  source: $usersOnline,
+  fn: (users, message) => {
+    if (message.event === 'connect' && !users.some(({ id }) => id === message.user.id)) {
+      return [...users, message.user];
+    }
+    if (message.event === 'disconnect') {
+      return users.filter((user) => user.id !== message.user.id);
+    }
+    return users;
+  },
+  target: $usersOnline,
+});
+
+sample({
+  clock: chatClosed,
+  fn: () => [],
+  target: $usersOnline,
+});
 
 export const messageSended = createEvent();
 const sendWebSocketMessageFx = createEffect<{ socket: WebSocket; message: Message }, void>(
