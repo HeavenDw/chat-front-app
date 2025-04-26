@@ -67,7 +67,8 @@ export const sessionGetFx = createEffect<void, SignResponse, SessionGetError>(as
     } else {
       throw new Error(fetchedData?.message);
     }
-  } catch (response: any) {
+  } catch (error) {
+    console.log(error);
     return Promise.reject();
   }
 });

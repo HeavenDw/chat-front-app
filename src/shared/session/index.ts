@@ -27,13 +27,13 @@ $authStatus.on(api.sessionGetFx.fail, () => AuthStatus.Anonymous);
 
 $user.on(api.logoutFx.doneData, () => null);
 
-interface ChainParams<Params extends RouteParams> {
-  otherwise?: Effect<void, any, any>;
+interface ChainParams {
+  otherwise?: Effect<void, RouteParamsAndQuery<object>>;
 }
 
 export const chainAuthorized = <Params extends RouteParams>(
   route: RouteInstance<Params>,
-  { otherwise }: ChainParams<Params> = {},
+  { otherwise }: ChainParams = {},
 ): RouteInstance<Params> => {
   const sessionCheckStarted = createEvent<RouteParamsAndQuery<Params>>();
   const sessionReceivedAnonymous = createEvent<RouteParamsAndQuery<Params>>();
@@ -81,7 +81,7 @@ export const chainAuthorized = <Params extends RouteParams>(
 
 export const chainAnonymous = <Params extends RouteParams>(
   route: RouteInstance<Params>,
-  { otherwise }: ChainParams<Params> = {},
+  { otherwise }: ChainParams = {},
 ): RouteInstance<Params> => {
   const sessionCheckStarted = createEvent<RouteParamsAndQuery<Params>>();
   const sessionReceivedAuth = createEvent<RouteParamsAndQuery<Params>>();

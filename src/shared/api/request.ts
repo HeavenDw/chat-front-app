@@ -8,7 +8,7 @@ const API_URL = 'http://localhost:5000/api/';
 interface Request {
   url: string;
   method: 'GET' | 'POST' | 'PATCH' | 'PUT' | 'DELETE';
-  data?: any;
+  data?: object;
   retryCount?: number;
 }
 

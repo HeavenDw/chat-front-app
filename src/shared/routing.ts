@@ -18,7 +18,7 @@ export const routes = {
   user: createRoute<{ userId?: string }>(),
 };
 
-const routesMap: UnmappedRouteObject<any>[] = [
+const routesMap: UnmappedRouteObject<object>[] = [
   {
     path: '/',
     route: routes.main,
