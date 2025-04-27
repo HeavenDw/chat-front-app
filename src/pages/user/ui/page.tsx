@@ -6,54 +6,18 @@ import { useUnit } from 'effector-react';
 import { routes } from '~/shared/routing';
 import { ErrorView } from '~/shared/ui';
 
-import {
-  $email,
-  $emailError,
-  $error,
-  $password,
-  $passwordError,
-  $submitDisabled,
-  emailChanged,
-  formSubmitted,
-  passwordChanged,
-} from '../model/model';
+import { $error, $formDisabled, $submitDisabled, formSubmitted } from '../model/model';
+import { emailField, passwordField } from '../model/model';
 import styles from './styles.module.css';
 
 export const UserPage = () => {
-  const [email, password, submitDisabled, emailError, passwordError, formError] = useUnit([
-    $email,
-    $password,
-    $submitDisabled,
-    $emailError,
-    $passwordError,
-    $error,
-  ]);
-  const [handleChangeEmail, handleChangePassword, handleSubmitForm] = useUnit([
-    emailChanged,
-    passwordChanged,
-    formSubmitted,
-  ]);
+  const [submitDisabled, formError] = useUnit([$submitDisabled, $error]);
+  const handleSubmitForm = useUnit(formSubmitted);
   return (
     <Container size={420} my={40} w="100%" h="100%">
       <Stack gap="xl">
-        <TextInput
-          value={email}
-          onChange={(event) => handleChangeEmail(event.target.value)}
-          label="email"
-          placeholder="email"
-          required
-          leftSection={<IconAt size="0.8rem" />}
-          error={emailError}
-        />
-        <PasswordInput
-          value={password}
-          onChange={(event) => handleChangePassword(event.target.value)}
-          label="password"
-          placeholder="your password"
-          required
-          leftSection={<IconLock size="0.8rem" />}
-          error={passwordError}
-        />
+        <Email />
+        <Password />
         <ErrorView error={formError?.message} />
 
         <Flex gap="xl" justify="space-between">
@@ -67,5 +31,50 @@ export const UserPage = () => {
         </Flex>
       </Stack>
     </Container>
+  );
+};
+
+const Email = () => {
+  const [email, emailError, formDisabled] = useUnit([
+    emailField.value,
+    emailField.error,
+    $formDisabled,
+  ]);
+  const handleChangeEmail = useUnit(emailField.changed);
+
+  return (
+    <TextInput
+      value={email}
+      onChange={(event) => handleChangeEmail(event.target.value)}
+      label="email"
+      placeholder="email"
+      required
+      leftSection={<IconAt size="0.8rem" />}
+      disabled={formDisabled}
+      error={emailError}
+    />
+  );
+};
+
+const Password = () => {
+  const [password, passwordError, formDisabled] = useUnit([
+    passwordField.value,
+    passwordField.error,
+    $formDisabled,
+  ]);
+  const handleChangePassword = useUnit(passwordField.changed);
+
+  return (
+    <PasswordInput
+      value={password}
+      onChange={(event) => handleChangePassword(event.target.value)}
+      label="password"
+      placeholder="your password"
+      required
+      mt="md"
+      leftSection={<IconLock size="0.8rem" />}
+      disabled={formDisabled}
+      error={passwordError}
+    />
   );
 };

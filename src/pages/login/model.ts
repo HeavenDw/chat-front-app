@@ -1,7 +1,9 @@
 import { attach, createEvent, createStore, sample } from 'effector';
-import { and, every, not, reset } from 'patronum';
+import { and, every, not } from 'patronum';
 
 import * as api from '~/shared/api';
+import { createField } from '~/shared/factory/create-field';
+import { isEmailValid, isPasswordValid } from '~/shared/form/field-checks';
 import { routes } from '~/shared/routing';
 import { chainAnonymous } from '~/shared/session';
 
@@ -10,59 +12,37 @@ const signInFx = attach({ effect: api.signInFx });
 export const currentRoute = routes.auth.login;
 export const anonymousRoute = chainAnonymous(currentRoute, { otherwise: routes.main.open });
 
-export const $email = createStore('');
-export const $emailError = createStore<null | 'empty' | 'invalid'>(null);
-export const $password = createStore('');
-export const $passwordError = createStore<null | 'empty' | 'invalid'>(null);
+export const $error = createStore<api.SignInError | null>(null).reset(currentRoute.opened);
 
-export const $error = createStore<api.SignInError | null>(null);
+export const $loginPending = signInFx.pending;
+export const $formDisabled = $loginPending;
 
-export const $passwordLoginPending = signInFx.pending;
-export const $formDisabled = $passwordLoginPending;
-const formValid = every({ stores: [$emailError, $passwordError], predicate: null });
-
-reset({
-  clock: currentRoute.opened,
-  target: [$email, $emailError, $password, $passwordError, $error],
-});
-
-export const emailChanged = createEvent<string>();
-export const passwordChanged = createEvent<string>();
 export const formSubmitted = createEvent();
 
-$email.on(emailChanged, (_, email) => email);
-$emailError.reset(emailChanged);
+export const emailField = createField<string, string>({
+  defaultValue: '',
+  validate: {
+    on: formSubmitted,
+    fn: isEmailValid,
+  },
+  resetOn: anonymousRoute.closed,
+});
+export const passwordField = createField<string, string>({
+  defaultValue: '',
+  validate: {
+    on: formSubmitted,
+    fn: isPasswordValid,
+  },
+  resetOn: anonymousRoute.closed,
+});
 
-$password.on(passwordChanged, (_, password) => password);
-$passwordError.reset(passwordChanged);
+const formValid = every({ stores: [emailField.error, passwordField.error], predicate: null });
 
 $error.reset(formSubmitted);
 
 sample({
   clock: formSubmitted,
-  source: $email,
-  fn: (email) => {
-    if (isEmpty(email)) return 'empty';
-    if (!isEmailValid(email)) return 'invalid';
-    return null;
-  },
-  target: $emailError,
-});
-
-sample({
-  clock: formSubmitted,
-  source: $password,
-  fn: (password) => {
-    if (isEmpty(password)) return 'empty';
-    if (!isPasswordValid(password)) return 'invalid';
-    return null;
-  },
-  target: $passwordError,
-});
-
-sample({
-  clock: formSubmitted,
-  source: { email: $email, password: $password },
+  source: { email: emailField.value, password: passwordField.value },
   filter: and(not($formDisabled), formValid),
   target: signInFx,
 });
@@ -73,15 +53,3 @@ sample({
 });
 
 $error.on(signInFx.failData, (_, error) => error);
-
-const isEmailValid = (email: string) => {
-  return email.includes('@') && email.length > 5;
-};
-
-const isPasswordValid = (password: string) => {
-  return password.length > 5;
-};
-
-const isEmpty = (string: string) => {
-  return string.trim().length === 0;
-};

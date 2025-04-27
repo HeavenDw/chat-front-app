@@ -19,24 +19,16 @@ import { routes } from '~/shared/routing';
 import { ErrorView } from '~/shared/ui';
 
 import {
-  $email,
-  $emailError,
   $error,
   $formDisabled,
-  $password,
-  $passwordError,
-  $passwordLoginPending,
-  emailChanged,
+  $loginPending,
+  emailField,
   formSubmitted,
-  passwordChanged,
+  passwordField,
 } from './model';
 
 export const LoginPage = () => {
-  const [passwordLoginPending, formDisabled, formError] = useUnit([
-    $passwordLoginPending,
-    $formDisabled,
-    $error,
-  ]);
+  const [loginPending, formDisabled, formError] = useUnit([$loginPending, $formDisabled, $error]);
   const handleSubmitForm = useUnit(formSubmitted);
 
   const onFormSubmit: FormEventHandler = (e) => {
@@ -87,8 +79,8 @@ export const LoginPage = () => {
           <Button
             fullWidth
             type="submit"
-            disabled={formDisabled && !passwordLoginPending}
-            loading={passwordLoginPending}
+            disabled={formDisabled && !loginPending}
+            loading={loginPending}
           >
             Sign in
           </Button>
@@ -99,8 +91,12 @@ export const LoginPage = () => {
 };
 
 const Email = () => {
-  const [email, emailError, formDisabled] = useUnit([$email, $emailError, $formDisabled]);
-  const handleChangeEmail = useUnit(emailChanged);
+  const [email, emailError, formDisabled] = useUnit([
+    emailField.value,
+    emailField.error,
+    $formDisabled,
+  ]);
+  const handleChangeEmail = useUnit(emailField.changed);
 
   return (
     <TextInput
@@ -118,11 +114,11 @@ const Email = () => {
 
 const Password = () => {
   const [password, passwordError, formDisabled] = useUnit([
-    $password,
-    $passwordError,
+    passwordField.value,
+    passwordField.error,
     $formDisabled,
   ]);
-  const handleChangePassword = useUnit(passwordChanged);
+  const handleChangePassword = useUnit(passwordField.changed);
 
   return (
     <PasswordInput
