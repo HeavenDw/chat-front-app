@@ -7,7 +7,7 @@ import { isEmailValid, isPasswordValid, isUsernameValid } from '~/shared/form/fi
 import { routes } from '~/shared/routing';
 import { chainAnonymous } from '~/shared/session';
 
-const signUpFx = attach({ effect: api.signUpFx });
+export const signUpFx = attach({ effect: api.signUpFx });
 
 export const currentRoute = routes.auth.register;
 export const anonymousRoute = chainAnonymous(currentRoute, { otherwise: routes.main.open });
@@ -42,7 +42,7 @@ export const passwordField = createField<string, string>({
 export const $error = createStore<api.signUpError | null>(null);
 
 export const $formDisabled = signUpFx.pending;
-const formValid = every({
+export const formValid = every({
   stores: [nameField.error, emailField.error, passwordField.error],
   predicate: null,
 });
