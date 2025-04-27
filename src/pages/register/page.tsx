@@ -9,7 +9,7 @@ import {
   TextInput,
   Title,
 } from '@mantine/core';
-import { IconAt } from '@tabler/icons-react';
+import { IconAt, IconLock, IconUser } from '@tabler/icons-react';
 import { Link } from 'atomic-router-react';
 import { useUnit } from 'effector-react';
 import { FormEventHandler } from 'react';
@@ -17,7 +17,14 @@ import { FormEventHandler } from 'react';
 import { routes } from '~/shared/routing';
 import { ErrorView } from '~/shared/ui';
 
-import { $error, $formDisabled, emailField, formSubmitted, passwordField } from './model';
+import {
+  $error,
+  $formDisabled,
+  emailField,
+  formSubmitted,
+  nameField,
+  passwordField,
+} from './model';
 
 export const RegisterPage = () => {
   const formError = useUnit($error);
@@ -54,6 +61,7 @@ export const RegisterPage = () => {
           mt={30}
           radius="md"
         >
+          <Username />
           <Email />
           <Password />
           <ErrorView error={formError?.message} />
@@ -71,6 +79,26 @@ export const RegisterPage = () => {
   );
 };
 
+const Username = () => {
+  const [name, usernameError, formDisabled] = useUnit([
+    nameField.value,
+    nameField.error,
+    $formDisabled,
+  ]);
+
+  return (
+    <TextInput
+      value={name}
+      onChange={(event) => nameField.changed(event.target.value)}
+      label="name"
+      placeholder="name"
+      leftSection={<IconUser size="0.8rem" />}
+      disabled={formDisabled}
+      error={usernameError}
+    />
+  );
+};
+
 const Email = () => {
   const [email, emailError, formDisabled] = useUnit([
     emailField.value,
@@ -84,6 +112,7 @@ const Email = () => {
       onChange={(event) => emailField.changed(event.target.value)}
       label="email"
       placeholder="email"
+      mt="md"
       leftSection={<IconAt size="0.8rem" />}
       disabled={formDisabled}
       error={emailError}
@@ -105,7 +134,7 @@ const Password = () => {
       label="password"
       placeholder="password"
       mt="md"
-      leftSection={<IconAt size="0.8rem" />}
+      leftSection={<IconLock size="0.8rem" />}
       disabled={formDisabled}
       error={passwordError}
     />

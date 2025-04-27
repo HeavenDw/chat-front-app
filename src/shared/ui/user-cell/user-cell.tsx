@@ -11,8 +11,8 @@ interface Props {
 export const UserCell = ({ user }: Props) => {
   return (
     <Box className={styles.container}>
-      <Avatar name={user.email} />
-      <Text>{user.email}</Text>
+      <Avatar name={user.name} />
+      <Text>{user.name}</Text>
     </Box>
   );
 };

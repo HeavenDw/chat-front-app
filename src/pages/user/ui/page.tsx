@@ -1,21 +1,22 @@
 import { Button, Container, Flex, PasswordInput, Stack, TextInput } from '@mantine/core';
-import { IconAt, IconLock } from '@tabler/icons-react';
+import { IconAt, IconLock, IconUser } from '@tabler/icons-react';
 import { Link } from 'atomic-router-react';
 import { useUnit } from 'effector-react';
 
 import { routes } from '~/shared/routing';
 import { ErrorView } from '~/shared/ui';
 
-import { $error, $formDisabled, $submitDisabled, formSubmitted } from '../model/model';
+import { $error, $formDisabled, formSubmitted, nameField } from '../model/model';
 import { emailField, passwordField } from '../model/model';
 import styles from './styles.module.css';
 
 export const UserPage = () => {
-  const [submitDisabled, formError] = useUnit([$submitDisabled, $error]);
+  const [formError] = useUnit([$error]);
   const handleSubmitForm = useUnit(formSubmitted);
   return (
     <Container size={420} my={40} w="100%" h="100%">
       <Stack gap="xl">
+        <Username />
         <Email />
         <Password />
         <ErrorView error={formError?.message} />
@@ -25,12 +26,32 @@ export const UserPage = () => {
             <Button fullWidth>Back to chat</Button>
           </Link>
 
-          <Button flex="1 1 50%" disabled={submitDisabled} onClick={() => handleSubmitForm()}>
+          <Button flex="1 1 50%" onClick={() => handleSubmitForm()}>
             Save
           </Button>
         </Flex>
       </Stack>
     </Container>
+  );
+};
+
+const Username = () => {
+  const [name, usernameError, formDisabled] = useUnit([
+    nameField.value,
+    nameField.error,
+    $formDisabled,
+  ]);
+
+  return (
+    <TextInput
+      value={name}
+      onChange={(event) => nameField.changed(event.target.value)}
+      label="name"
+      placeholder="name"
+      leftSection={<IconUser size="0.8rem" />}
+      disabled={formDisabled}
+      error={usernameError}
+    />
   );
 };
 

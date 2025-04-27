@@ -4,7 +4,7 @@ import { LocalStorageKeys, SignResponse, User } from '../types';
 import { requestFx } from './request';
 
 interface SignIn {
-  email: string;
+  name: string;
   password: string;
 }
 
@@ -27,6 +27,7 @@ export const logoutFx = createEffect<void, void>(async () => {
 });
 
 interface SignUpParams {
+  name: string;
   email: string;
   password: string;
 }

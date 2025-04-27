@@ -3,7 +3,7 @@ import { and, every, not } from 'patronum';
 
 import * as api from '~/shared/api';
 import { createField } from '~/shared/factory/create-field';
-import { isEmailValid, isPasswordValid } from '~/shared/form/field-checks';
+import { isEmailValid, isPasswordValid, isUsernameValid } from '~/shared/form/field-checks';
 import { routes } from '~/shared/routing';
 import { chainAnonymous } from '~/shared/session';
 
@@ -14,7 +14,15 @@ export const anonymousRoute = chainAnonymous(currentRoute, { otherwise: routes.m
 
 export const formSubmitted = createEvent();
 
-export const emailField = createField<string, 'empty' | 'invalid'>({
+export const nameField = createField<string, string>({
+  defaultValue: '',
+  validate: {
+    on: formSubmitted,
+    fn: isUsernameValid,
+  },
+  resetOn: anonymousRoute.closed,
+});
+export const emailField = createField<string, string>({
   defaultValue: '',
   validate: {
     on: formSubmitted,
@@ -22,7 +30,7 @@ export const emailField = createField<string, 'empty' | 'invalid'>({
   },
   resetOn: anonymousRoute.closed,
 });
-export const passwordField = createField<string, 'empty' | 'invalid'>({
+export const passwordField = createField<string, string>({
   defaultValue: '',
   validate: {
     on: formSubmitted,
@@ -35,7 +43,7 @@ export const $error = createStore<api.signUpError | null>(null);
 
 export const $formDisabled = signUpFx.pending;
 const formValid = every({
-  stores: [emailField.error, passwordField.error],
+  stores: [nameField.error, emailField.error, passwordField.error],
   predicate: null,
 });
 
@@ -44,6 +52,7 @@ $error.reset(formSubmitted);
 sample({
   clock: formSubmitted,
   source: {
+    name: nameField.value,
     email: emailField.value,
     password: passwordField.value,
   },

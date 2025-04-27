@@ -2,15 +2,13 @@ import {
   Anchor,
   Button,
   Container,
-  Flex,
-  Modal,
   Paper,
   PasswordInput,
   Text,
   TextInput,
   Title,
 } from '@mantine/core';
-import { IconAt, IconFaceId, IconLock } from '@tabler/icons-react';
+import { IconLock, IconUser } from '@tabler/icons-react';
 import { Link } from 'atomic-router-react';
 import { useUnit } from 'effector-react';
 import { FormEventHandler } from 'react';
@@ -22,8 +20,8 @@ import {
   $error,
   $formDisabled,
   $loginPending,
-  emailField,
   formSubmitted,
+  nameField,
   passwordField,
 } from './model';
 
@@ -39,16 +37,6 @@ export const LoginPage = () => {
   return (
     <>
       <Container size={420} my={40} w="100%" h="100%">
-        <Modal opened={false} onClose={close} title="Verify yout identity" centered>
-          <Flex justify="center" direction="column" align="center" gap="sm" mt="sm">
-            <IconFaceId size="5rem" />
-            <Text size="sm">needs to verify you</Text>
-            <Button mt="lg" variant="subtle">
-              use public key
-            </Button>
-          </Flex>
-        </Modal>
-
         <Title
           style={(theme) => ({
             fontFamily: `Greycliff CF, ${theme.fontFamily}`,
@@ -73,7 +61,7 @@ export const LoginPage = () => {
           mt={30}
           radius="md"
         >
-          <Email />
+          <Username />
           <Password />
           <ErrorView error={formError?.message} />
           <Button
@@ -90,24 +78,22 @@ export const LoginPage = () => {
   );
 };
 
-const Email = () => {
-  const [email, emailError, formDisabled] = useUnit([
-    emailField.value,
-    emailField.error,
+const Username = () => {
+  const [name, usernameError, formDisabled] = useUnit([
+    nameField.value,
+    nameField.error,
     $formDisabled,
   ]);
-  const handleChangeEmail = useUnit(emailField.changed);
 
   return (
     <TextInput
-      value={email}
-      onChange={(event) => handleChangeEmail(event.target.value)}
-      label="email"
-      placeholder="email"
-      required
-      leftSection={<IconAt size="0.8rem" />}
+      value={name}
+      onChange={(event) => nameField.changed(event.target.value)}
+      label="name"
+      placeholder="name"
+      leftSection={<IconUser size="0.8rem" />}
       disabled={formDisabled}
-      error={emailError}
+      error={usernameError}
     />
   );
 };

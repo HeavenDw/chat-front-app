@@ -3,7 +3,7 @@ import { and, every, not } from 'patronum';
 
 import * as api from '~/shared/api';
 import { createField } from '~/shared/factory/create-field';
-import { isEmailValid, isPasswordValid } from '~/shared/form/field-checks';
+import { isPasswordValid, isUsernameValid } from '~/shared/form/field-checks';
 import { routes } from '~/shared/routing';
 import { chainAnonymous } from '~/shared/session';
 
@@ -19,11 +19,11 @@ export const $formDisabled = $loginPending;
 
 export const formSubmitted = createEvent();
 
-export const emailField = createField<string, string>({
+export const nameField = createField<string, string>({
   defaultValue: '',
   validate: {
     on: formSubmitted,
-    fn: isEmailValid,
+    fn: isUsernameValid,
   },
   resetOn: anonymousRoute.closed,
 });
@@ -36,13 +36,16 @@ export const passwordField = createField<string, string>({
   resetOn: anonymousRoute.closed,
 });
 
-const formValid = every({ stores: [emailField.error, passwordField.error], predicate: null });
+const formValid = every({
+  stores: [nameField.error, passwordField.error],
+  predicate: null,
+});
 
 $error.reset(formSubmitted);
 
 sample({
   clock: formSubmitted,
-  source: { email: emailField.value, password: passwordField.value },
+  source: { name: nameField.value, password: passwordField.value },
   filter: and(not($formDisabled), formValid),
   target: signInFx,
 });

@@ -3,7 +3,7 @@ import { createEffect, createEvent, createStore, sample } from 'effector';
 import { every } from 'patronum';
 
 import { createField } from '~/shared/factory/create-field';
-import { isEmailValid, isPasswordValid } from '~/shared/form/field-checks';
+import { isEmailValid, isPasswordValid, isUsernameValid } from '~/shared/form/field-checks';
 import { routes } from '~/shared/routing';
 import { chainAuthorized } from '~/shared/session';
 import { User } from '~/shared/types';
@@ -28,6 +28,13 @@ sample({
 
 export const formSubmitted = createEvent();
 
+export const nameField = createField<string, string>({
+  defaultValue: '',
+  validate: {
+    on: formSubmitted,
+    fn: isUsernameValid,
+  },
+});
 export const emailField = createField<string, string>({
   defaultValue: '',
   validate: {
@@ -45,21 +52,19 @@ export const passwordField = createField<string, string>({
 
 sample({
   clock: $user,
+  fn: (user) => user?.name ?? '',
+  target: nameField.value,
+});
+
+sample({
+  clock: $user,
   fn: (user) => user?.email ?? '',
   target: emailField.value,
 });
 
-const formValid = every({ stores: [emailField.error, passwordField.error], predicate: null });
-
-export const $submitDisabled = createStore(true);
-
-sample({
-  clock: [emailField.value, passwordField.value],
-  source: { email: emailField.value, password: passwordField.value },
-  fn: ({ email, password }) => {
-    return password.length === 0 || email.length === 0;
-  },
-  target: $submitDisabled,
+const formValid = every({
+  stores: [nameField.error, emailField.error, passwordField.error],
+  predicate: null,
 });
 
 sample({
