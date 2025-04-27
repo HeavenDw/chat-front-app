@@ -31,8 +31,10 @@ export const passwordChanged = createEvent<string>();
 export const formSubmitted = createEvent();
 
 $email.on(emailChanged, (_, email) => email);
+$emailError.reset(emailChanged);
 
 $password.on(passwordChanged, (_, password) => password);
+$passwordError.reset(passwordChanged);
 
 $error.reset(formSubmitted);
 

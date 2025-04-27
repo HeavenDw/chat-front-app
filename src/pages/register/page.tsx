@@ -118,5 +118,5 @@ const ErrorView = () => {
     return <Space h="lg" />;
   }
 
-  return <Text c="red">Что-то пошло не так</Text>;
+  return <Text c="red">{error?.message ?? 'Something went wrong'}</Text>;
 };

@@ -34,7 +34,7 @@ export const requestFx = createEffect<Request, any>(
 
             requestFx({ method, url, data, retryCount: 0 });
           } catch (response: any) {
-            return Promise.reject();
+            return Promise.reject(response);
           }
         } else {
           const fetchedData = await response.json();
@@ -43,7 +43,7 @@ export const requestFx = createEffect<Request, any>(
       }
       return await response.json();
     } catch (response: any) {
-      return Promise.reject();
+      return Promise.reject(response);
     }
   },
 );

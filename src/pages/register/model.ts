@@ -88,6 +88,7 @@ function createField<Value, Error>(params: CreateFieldParams<Value, Error>) {
   const $error = createStore<Error | null>(null);
   const changed = createEvent<Value>();
   $value.on(changed, (_, value) => value);
+  $error.reset(changed);
 
   if (params.validate) {
     sample({
@@ -100,7 +101,6 @@ function createField<Value, Error>(params: CreateFieldParams<Value, Error>) {
 
   if (params.resetOn) {
     $value.reset(params.resetOn);
-    $error.reset(params.resetOn);
   }
 
   return { value: $value, error: $error, changed };

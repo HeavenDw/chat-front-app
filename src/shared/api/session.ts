@@ -8,7 +8,7 @@ interface SignIn {
   password: string;
 }
 
-export type SignInError = { error: 'invalid_request' } | { error: 'invalid_credentials' };
+export type SignInError = { message: string };
 
 export const signInFx = createEffect<SignIn, User, SignInError>(async (form) => {
   const response: SignResponse = await requestFx({ url: 'login', method: 'POST', data: form });
@@ -31,20 +31,31 @@ interface SignUpParams {
   password: string;
 }
 
-export type signUpError = { error: 'user_exist' };
+export type signUpError = { message: string };
 
 export const signUpFx = createEffect<SignUpParams, User, signUpError>(async (form) => {
-  const response: SignResponse = await fetch('http://localhost:5000/api/registration', {
-    method: 'post',
-    body: JSON.stringify(form),
-    headers: {
-      'Content-Type': 'application/json',
-    },
-  }).then((response) => response.json());
+  try {
+    const response = await fetch('http://localhost:5000/api/registration', {
+      method: 'post',
+      body: JSON.stringify(form),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      credentials: 'include',
+    });
 
-  localStorage.setItem(LocalStorageKeys.accessToken, response.accessToken);
+    const data: SignResponse = await response.json();
 
-  return response.user;
+    if (!response.ok) {
+      return Promise.reject(data);
+    }
+
+    localStorage.setItem(LocalStorageKeys.accessToken, data.accessToken);
+
+    return data.user;
+  } catch (error) {
+    return Promise.reject(error);
+  }
 });
 
 type SessionGetError = { error: 'unauthorized' };

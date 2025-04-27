@@ -142,9 +142,5 @@ const ErrorView = () => {
     return <Space h="lg" />;
   }
 
-  if (error?.error === 'invalid_credentials') {
-    return <Text c="red">Неверный пароль и/или почта</Text>;
-  }
-
-  return <Text c="red">Что-то пошло не так</Text>;
+  return <Text c="red">{error?.message ?? 'Something went wrong'}</Text>;
 };

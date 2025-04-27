@@ -30,21 +30,23 @@ export const $emailError = createStore<null | 'empty' | 'invalid'>(null);
 
 export const emailChanged = createEvent<string>();
 $email.on(emailChanged, (_, email) => email);
+$emailError.reset(emailChanged);
 
 export const $password = createStore('');
 export const $passwordError = createStore<null | string>(null);
 export const passwordChanged = createEvent<string>();
 $password.on(passwordChanged, (_, password) => password);
+$passwordError.reset(passwordChanged);
 
 const formValid = every({ stores: [$emailError, $passwordError], predicate: null });
 
 export const $submitDisabled = createStore(true);
 
 sample({
-  clock: [$user, $email, $password],
-  source: { user: $user, email: $email, password: $password },
-  fn: ({ user, email, password }) => {
-    return user?.email === email || password.length === 0 || email.length === 0;
+  clock: [$email, $password],
+  source: { email: $email, password: $password },
+  fn: ({ email, password }) => {
+    return password.length === 0 || email.length === 0;
   },
   target: $submitDisabled,
 });
