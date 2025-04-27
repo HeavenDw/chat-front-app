@@ -5,7 +5,6 @@ import {
   Group,
   Paper,
   PasswordInput,
-  Space,
   Text,
   TextInput,
   Title,
@@ -16,10 +15,12 @@ import { useUnit } from 'effector-react';
 import { FormEventHandler } from 'react';
 
 import { routes } from '~/shared/routing';
+import { ErrorView } from '~/shared/ui';
 
 import { $error, $formDisabled, emailField, formSubmitted, passwordField } from './model';
 
 export const RegisterPage = () => {
+  const formError = useUnit($error);
   const handleSubmitForm = useUnit(formSubmitted);
 
   const onFormSubmit: FormEventHandler = (e) => {
@@ -55,7 +56,7 @@ export const RegisterPage = () => {
         >
           <Email />
           <Password />
-          <ErrorView />
+          <ErrorView error={formError?.message} />
           <Group mt="lg">
             <Anchor size="sm" component={Link} to={routes.auth.login}>
               Already have account?
@@ -109,14 +110,4 @@ const Password = () => {
       error={passwordError}
     />
   );
-};
-
-const ErrorView = () => {
-  const error = useUnit($error);
-
-  if (!error) {
-    return <Space h="lg" />;
-  }
-
-  return <Text c="red">{error?.message ?? 'Something went wrong'}</Text>;
 };

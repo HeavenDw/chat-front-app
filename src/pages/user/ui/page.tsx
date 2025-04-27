@@ -1,9 +1,10 @@
-import { Button, Container, Flex, PasswordInput, Stack, Text, TextInput } from '@mantine/core';
+import { Button, Container, Flex, PasswordInput, Stack, TextInput } from '@mantine/core';
 import { IconAt, IconLock } from '@tabler/icons-react';
 import { Link } from 'atomic-router-react';
 import { useUnit } from 'effector-react';
 
 import { routes } from '~/shared/routing';
+import { ErrorView } from '~/shared/ui';
 
 import {
   $email,
@@ -19,12 +20,13 @@ import {
 import styles from './styles.module.css';
 
 export const UserPage = () => {
-  const [email, password, submitDisabled, emailError, passwordError] = useUnit([
+  const [email, password, submitDisabled, emailError, passwordError, formError] = useUnit([
     $email,
     $password,
     $submitDisabled,
     $emailError,
     $passwordError,
+    $error,
   ]);
   const [handleChangeEmail, handleChangePassword, handleSubmitForm] = useUnit([
     emailChanged,
@@ -52,7 +54,7 @@ export const UserPage = () => {
           leftSection={<IconLock size="0.8rem" />}
           error={passwordError}
         />
-        <ErrorView />
+        <ErrorView error={formError?.message} />
 
         <Flex gap="xl" justify="space-between">
           <Link to={routes.main} className={styles.link}>
@@ -66,14 +68,4 @@ export const UserPage = () => {
       </Stack>
     </Container>
   );
-};
-
-const ErrorView = () => {
-  const error = useUnit($error);
-
-  if (!error) {
-    return null;
-  }
-
-  return <Text c="red">Something went wrong</Text>;
 };

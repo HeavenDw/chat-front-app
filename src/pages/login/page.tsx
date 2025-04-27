@@ -6,7 +6,6 @@ import {
   Modal,
   Paper,
   PasswordInput,
-  Space,
   Text,
   TextInput,
   Title,
@@ -17,6 +16,7 @@ import { useUnit } from 'effector-react';
 import { FormEventHandler } from 'react';
 
 import { routes } from '~/shared/routing';
+import { ErrorView } from '~/shared/ui';
 
 import {
   $email,
@@ -32,7 +32,11 @@ import {
 } from './model';
 
 export const LoginPage = () => {
-  const [passwordLoginPending, formDisabled] = useUnit([$passwordLoginPending, $formDisabled]);
+  const [passwordLoginPending, formDisabled, formError] = useUnit([
+    $passwordLoginPending,
+    $formDisabled,
+    $error,
+  ]);
   const handleSubmitForm = useUnit(formSubmitted);
 
   const onFormSubmit: FormEventHandler = (e) => {
@@ -79,7 +83,7 @@ export const LoginPage = () => {
         >
           <Email />
           <Password />
-          <ErrorView />
+          <ErrorView error={formError?.message} />
           <Button
             fullWidth
             type="submit"
@@ -133,14 +137,4 @@ const Password = () => {
       error={passwordError}
     />
   );
-};
-
-const ErrorView = () => {
-  const error = useUnit($error);
-
-  if (!error) {
-    return <Space h="lg" />;
-  }
-
-  return <Text c="red">{error?.message ?? 'Something went wrong'}</Text>;
 };
