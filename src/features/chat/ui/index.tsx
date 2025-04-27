@@ -22,6 +22,7 @@ export const Chat = () => {
     $commentSubmitDisabled,
     $user,
   ]);
+  const [handleChangeComment, sendMessage] = useUnit([commentChanged, messageSended]);
 
   const commentListRef = useRef<HTMLDivElement>(null);
 
@@ -46,17 +47,17 @@ export const Chat = () => {
           <Flex align="center" gap="8px">
             <TextInput
               value={comment}
-              onChange={(event) => commentChanged(event.target.value)}
+              onChange={(event) => handleChangeComment(event.target.value)}
               placeholder="Type here..."
               flex={1}
               onKeyDown={(event) => {
                 if (event.key === 'Enter' && !commentSubmitDisabled) {
                   event.preventDefault();
-                  messageSended();
+                  sendMessage();
                 }
               }}
             />
-            <Button onClick={() => messageSended()} disabled={commentSubmitDisabled}>
+            <Button onClick={() => sendMessage()} disabled={commentSubmitDisabled}>
               Send message
             </Button>
           </Flex>

@@ -33,10 +33,11 @@ import {
 
 export const LoginPage = () => {
   const [passwordLoginPending, formDisabled] = useUnit([$passwordLoginPending, $formDisabled]);
+  const handleSubmitForm = useUnit(formSubmitted);
 
   const onFormSubmit: FormEventHandler = (e) => {
     e.preventDefault();
-    formSubmitted();
+    handleSubmitForm();
   };
 
   return (
@@ -95,11 +96,12 @@ export const LoginPage = () => {
 
 const Email = () => {
   const [email, emailError, formDisabled] = useUnit([$email, $emailError, $formDisabled]);
+  const handleChangeEmail = useUnit(emailChanged);
 
   return (
     <TextInput
       value={email}
-      onChange={(event) => emailChanged(event.target.value)}
+      onChange={(event) => handleChangeEmail(event.target.value)}
       label="email"
       placeholder="email"
       required
@@ -116,10 +118,12 @@ const Password = () => {
     $passwordError,
     $formDisabled,
   ]);
+  const handleChangePassword = useUnit(passwordChanged);
+
   return (
     <PasswordInput
       value={password}
-      onChange={(event) => passwordChanged(event.target.value)}
+      onChange={(event) => handleChangePassword(event.target.value)}
       label="password"
       placeholder="your password"
       required

@@ -26,12 +26,17 @@ export const UserPage = () => {
     $emailError,
     $passwordError,
   ]);
+  const [handleChangeEmail, handleChangePassword, handleSubmitForm] = useUnit([
+    emailChanged,
+    passwordChanged,
+    formSubmitted,
+  ]);
   return (
     <Container size={420} my={40} w="100%" h="100%">
       <Stack gap="xl">
         <TextInput
           value={email}
-          onChange={(event) => emailChanged(event.target.value)}
+          onChange={(event) => handleChangeEmail(event.target.value)}
           label="email"
           placeholder="email"
           required
@@ -40,7 +45,7 @@ export const UserPage = () => {
         />
         <PasswordInput
           value={password}
-          onChange={(event) => passwordChanged(event.target.value)}
+          onChange={(event) => handleChangePassword(event.target.value)}
           label="password"
           placeholder="your password"
           required
@@ -54,7 +59,7 @@ export const UserPage = () => {
             <Button fullWidth>Back to chat</Button>
           </Link>
 
-          <Button flex="1 1 50%" disabled={submitDisabled} onClick={() => formSubmitted()}>
+          <Button flex="1 1 50%" disabled={submitDisabled} onClick={() => handleSubmitForm()}>
             Save
           </Button>
         </Flex>

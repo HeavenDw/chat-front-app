@@ -20,9 +20,11 @@ import { routes } from '~/shared/routing';
 import { $error, $formDisabled, emailField, formSubmitted, passwordField } from './model';
 
 export const RegisterPage = () => {
+  const handleSubmitForm = useUnit(formSubmitted);
+
   const onFormSubmit: FormEventHandler = (e) => {
     e.preventDefault();
-    formSubmitted();
+    handleSubmitForm();
   };
   return (
     <>
