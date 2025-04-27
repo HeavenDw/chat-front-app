@@ -9,7 +9,8 @@
     "lint": "eslint .",
     "preview": "vite preview",
     "type-check": "tsc --noEmit",
-    "prepare": "git config core.hooksPath ./.git-hooks || echo 'Not in a git repo'"
+    "prepare": "git config core.hooksPath ./.git-hooks || echo 'Not in a git repo'",
+    "test": "vitest"
   },
   "dependencies": {
     "@mantine/core": "^7.17.4",
@@ -41,10 +42,13 @@
     "eslint-plugin-react-hooks": "^5.1.0",
     "eslint-plugin-react-refresh": "^0.4.19",
     "globals": "^15.15.0",
+    "jsdom": "^26.1.0",
+    "path": "^0.12.7",
     "typescript": "~5.7.2",
     "typescript-eslint": "^8.24.1",
     "typescript-plugin-css-modules": "^5.1.0",
-    "vite": "^6.2.0"
+    "vite": "^6.2.0",
+    "vitest": "^3.1.2"
   },
   "lint-staged": {
     "*.{ts,tsx}": [

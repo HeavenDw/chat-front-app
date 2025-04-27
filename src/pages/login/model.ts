@@ -7,7 +7,7 @@ import { isPasswordValid, isUsernameValid } from '~/shared/form/field-checks';
 import { routes } from '~/shared/routing';
 import { chainAnonymous } from '~/shared/session';
 
-const signInFx = attach({ effect: api.signInFx });
+export const signInFx = attach({ effect: api.signInFx });
 
 export const currentRoute = routes.auth.login;
 export const anonymousRoute = chainAnonymous(currentRoute, { otherwise: routes.main.open });
@@ -36,7 +36,7 @@ export const passwordField = createField<string, string>({
   resetOn: anonymousRoute.closed,
 });
 
-const formValid = every({
+export const formValid = every({
   stores: [nameField.error, passwordField.error],
   predicate: null,
 });
