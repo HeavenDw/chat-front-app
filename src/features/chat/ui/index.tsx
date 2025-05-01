@@ -56,8 +56,13 @@ export const Chat = () => {
                   sendMessage();
                 }
               }}
+              data-testid="commentInput"
             />
-            <Button onClick={() => sendMessage()} disabled={commentSubmitDisabled}>
+            <Button
+              onClick={() => sendMessage()}
+              disabled={commentSubmitDisabled}
+              data-testid="commentSubmit"
+            >
               Send message
             </Button>
           </Flex>
